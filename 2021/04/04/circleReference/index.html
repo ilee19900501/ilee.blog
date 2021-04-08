@@ -31,8 +31,9 @@
 <meta property="og:description" content="desc:spring循环依赖">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/2021/04/04/circleReference/circle_ref.png">
+<meta property="og:image" content="http://example.com/2021/04/04/circleReference/circle_lock.png">
 <meta property="article:published_time" content="2021-04-04T03:09:36.000Z">
-<meta property="article:modified_time" content="2021-04-04T07:57:45.493Z">
+<meta property="article:modified_time" content="2021-04-05T02:28:55.247Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/04/04/circleReference/circle_ref.png">
@@ -232,10 +233,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2021-04-04 11:09:36 / Modified: 15:57:45" itemprop="dateCreated datePublished" datetime="2021-04-04T11:09:36+08:00">2021-04-04</time>
+      <time title="Created: 2021-04-04 11:09:36" itemprop="dateCreated datePublished" datetime="2021-04-04T11:09:36+08:00">2021-04-04</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2021-04-05 10:28:55" itemprop="dateModified" datetime="2021-04-05T10:28:55+08:00">2021-04-05</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -270,7 +277,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class JdkProxyBeanPostProcessor implements SmartInstantiationAwareBeanPostProcessor &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public Object getEarlyBeanReference(Object bean, String beanName) throws BeansException &#123;</span><br><span class="line">        if(&quot;instance1&quot;.equals(beanName)) &#123;</span><br><span class="line">            return new JdkDyamicProxy(bean).getProxy();</span><br><span class="line">        &#125;</span><br><span class="line">        return bean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>拓展：如果在另一个方法中，不需要方法传参对某个对象去判断（减少代码耦合），这里可以引入函数接口实现</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@FunctionalInterface</span><br><span class="line">public interface ObjectFactory &#123;</span><br><span class="line">    Object getObject();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>问题：<br>1.构造方法的循环依赖可以解决吗？<br>使用构造方法时候，bean都没有实例化完成，所以没办法解决<br>2.propoType下可以解决循环依赖吗？<br>propoType下bean都没有放到缓存中去</p>
+<p>问题：<br>1.构造方法的循环依赖可以解决吗？<br>使用构造方法时候，bean都没有实例化完成，所以没办法解决<br>2.propoType下可以解决循环依赖吗？<br>propoType下bean都没有放到缓存中去<br>3.使用三级缓存之后还有可能获取到不完整的bean<br><img src="/2021/04/04/circleReference/circle_lock.png"><br>解决方案：加锁</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">private static Object getSingtonObject(String beanName) &#123;</span><br><span class="line">        if(singtonObjects.containsKey(beanName)) &#123;</span><br><span class="line">            return singtonObjects.get(beanName);</span><br><span class="line">        &#125;</span><br><span class="line">        synchronized (singtonObjects) &#123;</span><br><span class="line">            if(earlySingtonObjects.containsKey(beanName)) &#123;</span><br><span class="line">                return earlySingtonObjects.get(beanName);</span><br><span class="line">            &#125;else if(null !&#x3D; objectFactory.get(beanName).getObject()) &#123;</span><br><span class="line">                &#x2F;&#x2F; 动态代理创建的bean</span><br><span class="line">                Object object &#x3D; objectFactory.get(beanName).getObject();</span><br><span class="line">                &#x2F;&#x2F; 再放到二级缓存</span><br><span class="line">                earlySingtonObjects.put(beanName, object);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
