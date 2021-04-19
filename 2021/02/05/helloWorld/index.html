@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://example.com/2021/02/05/helloWorld/ac.png">
 <meta property="og:image" content="http://example.com/2021/02/05/helloWorld/ioc_source_code.png">
 <meta property="article:published_time" content="2021-02-05T14:38:16.000Z">
-<meta property="article:modified_time" content="2021-04-08T13:31:27.178Z">
+<meta property="article:modified_time" content="2021-04-08T13:43:45.563Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/02/05/helloWorld/iocProcess.jpg">
@@ -168,7 +168,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-count">5</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -243,7 +243,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-04-08 21:31:27" itemprop="dateModified" datetime="2021-04-08T21:31:27+08:00">2021-04-08</time>
+        <time title="Modified: 2021-04-08 21:43:45" itemprop="dateModified" datetime="2021-04-08T21:43:45+08:00">2021-04-08</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -274,7 +274,9 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">DefaultListableBeanFactory factory &#x3D; new DefaultListableBeanFactory();</span><br><span class="line">&#x2F;&#x2F; populate the factory with bean definitions</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; now register any needed BeanPostProcessor instances</span><br><span class="line">factory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());</span><br><span class="line">factory.addBeanPostProcessor(new MyBeanPostProcessor());</span><br><span class="line"></span><br><span class="line">DefaultListableBeanFactory factory &#x3D; new DefaultListableBeanFactory();</span><br><span class="line">XmlBeanDefinitionReader reader &#x3D; new XmlBeanDefinitionReader(factory);</span><br><span class="line">reader.loadBeanDefinitions(new FileSystemResource(&quot;beans.xml&quot;));</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; bring in some property values from a Properties file</span><br><span class="line">PropertyPlaceholderConfigurer cfg &#x3D; new PropertyPlaceholderConfigurer();</span><br><span class="line">cfg.setLocation(new FileSystemResource(&quot;jdbc.properties&quot;));</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; now actually do the replacement</span><br><span class="line">cfg.postProcessBeanFactory(factory);</span><br></pre></td></tr></table></figure>
 <p>4.什么是factoryBean<br>一个扩展类接口，ioc在beanFactory的getBean()会先判断当前bean是不是实现了这个接口，实现了则直接返回getObject()的bean。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@Compentent</span><br><span class="line">public class Config implements FactoryBean &#123;</span><br><span class="line">   @Override</span><br><span class="line">   public Object getObject() throws Exception &#123;</span><br><span class="line">      return new Config();</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
-
+<p>4.@Configuration注解加与不加的区别</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">@ComponentScan(&quot;demo.bean&quot;)</span><br><span class="line">public class MainConfig &#123;</span><br><span class="line">    @Bean(&quot;config&quot;)</span><br><span class="line">    public Config test() &#123;</span><br><span class="line">        Config config &#x3D; new Config();</span><br><span class="line">        config.setIoc_bean2(get());</span><br><span class="line">        return config;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;@Bean</span><br><span class="line">    public Ioc_bean2 get() &#123;</span><br><span class="line">        Ioc_bean2 ioc_bean2 &#x3D; new Ioc_bean2();</span><br><span class="line"></span><br><span class="line">        return ioc_bean2;</span><br><span class="line">    &#125;</span><br><span class="line">AnnotationConfigApplicationContext ac &#x3D; new AnnotationConfigApplicationContext(MainConfig.class);</span><br><span class="line">ac.getBean(&quot;config&quot;);</span><br><span class="line">ac.getBean(&quot;config&quot;);    </span><br><span class="line">    此处ioc_bean2会创建一次，不加则会创建2次</span><br></pre></td></tr></table></figure>
+<p>5.如果@Compent的beanName和@Bean的beanName相同会怎么样？<br>这里会覆盖，@Compent这个注解会优先扫描加到map里面。<br>同一个注解下beanName相同则会报错</p>
 <h3 id="ioc源码分析"><a href="#ioc源码分析" class="headerlink" title="ioc源码分析"></a>ioc源码分析</h3><p><img src="/2021/02/05/helloWorld/ioc_source_code.png"></p>
 
     </div>
@@ -294,8 +296,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2021/04/04/circleReference/" rel="next" title="spring循环依赖分析">
-                  spring循环依赖分析 <i class="fa fa-chevron-right"></i>
+                <a href="/2021/04/04/aop/" rel="next" title="aop分析">
+                  aop分析 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
