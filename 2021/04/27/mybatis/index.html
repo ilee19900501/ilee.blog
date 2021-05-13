@@ -34,7 +34,7 @@
 <meta property="og:image" content="http://example.com/2021/04/27/mybatis/executor.png">
 <meta property="og:image" content="http://example.com/2021/04/27/mybatis/8396.png">
 <meta property="article:published_time" content="2021-04-27T14:50:30.000Z">
-<meta property="article:modified_time" content="2021-04-29T23:53:56.045Z">
+<meta property="article:modified_time" content="2021-05-11T13:57:57.700Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/04/27/mybatis/builder.png">
@@ -167,12 +167,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-count">9</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">categories</span>
       </div>
   </nav>
@@ -242,7 +242,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-04-30 07:53:56" itemprop="dateModified" datetime="2021-04-30T07:53:56+08:00">2021-04-30</time>
+        <time title="Modified: 2021-05-11 21:57:57" itemprop="dateModified" datetime="2021-05-11T21:57:57+08:00">2021-05-11</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -282,7 +282,6 @@
 <h4 id="二级缓存的使用-命中条件"><a href="#二级缓存的使用-命中条件" class="headerlink" title="二级缓存的使用(命中条件)"></a>二级缓存的使用(命中条件)</h4><p>1）会话提交后<br>2）sql语句、参数相同<br>3）相同的statementID<br>4）RowBounds相同<br>注意：设置为自动提交事务并不会命中二级缓存。 </p>
 <h4 id="二级缓存的配置"><a href="#二级缓存的配置" class="headerlink" title="二级缓存的配置"></a>二级缓存的配置</h4><p>mapper.xml里面添加<cache>,statement里面可控制是否开启，cacheEnabled = false,true</p>
 <h4 id="二级缓存的缺点"><a href="#二级缓存的缺点" class="headerlink" title="二级缓存的缺点"></a>二级缓存的缺点</h4><p> 应为缓存是namespace级别的，所以当一个namespace里面有个sql是连表查询，另一个mappe里面对数据修改了，前一个namespace是无感知的，会造成脏数据。所以不推荐使用二级缓存</p>
-<p>4.mybatis怎么解析动态sql</p>
 
     </div>
 
@@ -301,6 +300,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2021/05/11/rabbitmq/" rel="next" title="rabbitmq">
+                  rabbitmq <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
