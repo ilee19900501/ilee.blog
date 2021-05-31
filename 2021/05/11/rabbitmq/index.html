@@ -37,7 +37,7 @@
 <meta property="og:image" content="http://example.com/2021/05/11/rabbitmq/dlx.png">
 <meta property="og:image" content="http://example.com/2021/05/11/rabbitmq/ttl.png">
 <meta property="article:published_time" content="2021-05-11T13:58:52.000Z">
-<meta property="article:modified_time" content="2021-05-16T04:21:14.445Z">
+<meta property="article:modified_time" content="2021-05-24T14:57:18.791Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/05/11/rabbitmq/structure.png">
@@ -155,7 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#mq%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">mq概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mq%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">mq工作模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E6%80%A7%E6%8A%95%E9%80%92"><span class="nav-number">3.</span> <span class="nav-text">消息可靠性投递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E8%80%85ack"><span class="nav-number">4.</span> <span class="nav-text">消费者ack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%94%A8rabbitmq%E5%AE%9E%E7%8E%B0%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97"><span class="nav-number">5.</span> <span class="nav-text">如何用rabbitmq实现延迟队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E7%A7%AF%E5%8E%8B%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">如何处理消息积压问题</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#mq%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">mq概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mq%E5%B7%A5%E4%BD%9C%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">mq工作模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E5%8F%AF%E9%9D%A0%E6%80%A7%E6%8A%95%E9%80%92"><span class="nav-number">3.</span> <span class="nav-text">消息可靠性投递</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E8%80%85ack"><span class="nav-number">4.</span> <span class="nav-text">消费者ack</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%94%A8rabbitmq%E5%AE%9E%E7%8E%B0%E5%BB%B6%E8%BF%9F%E9%98%9F%E5%88%97"><span class="nav-number">5.</span> <span class="nav-text">如何用rabbitmq实现延迟队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E6%B6%88%E6%81%AF%E7%A7%AF%E5%8E%8B%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">如何处理消息积压问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rabbitmq%E5%AE%89%E8%A3%85"><span class="nav-number">7.</span> <span class="nav-text">rabbitmq安装</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -170,7 +170,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">10</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -245,7 +245,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-05-16 12:21:14" itemprop="dateModified" datetime="2021-05-16T12:21:14+08:00">2021-05-16</time>
+        <time title="Modified: 2021-05-24 22:57:18" itemprop="dateModified" datetime="2021-05-24T22:57:18+08:00">2021-05-24</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -283,6 +283,17 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">   @Bean</span><br><span class="line">    Queue orderQueue() &#123;</span><br><span class="line">        Map&lt;String, Object&gt; args &#x3D; new HashMap&lt;&gt;(2);</span><br><span class="line">&#x2F;&#x2F;       x-dead-letter-exchange    声明  死信队列Exchange</span><br><span class="line">        args.put(&quot;x-dead-letter-exchange&quot;, DEAD_LETTER_EXCHANGE);</span><br><span class="line">&#x2F;&#x2F;       x-dead-letter-routing-key    声明 死信队列抛出异常重定向队列的routingKey(TKEY_R)</span><br><span class="line">        args.put(&quot;x-dead-letter-routing-key&quot;, DEAD_LETTER_REDIRECT_ROUTING_KEY);</span><br><span class="line">        args.put(&quot;x-message-ttl&quot;, 1000);&#x2F;&#x2F;单位是ms</span><br><span class="line">        return new Queue(QUEUE_NAME, true, false, false, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h3 id="如何处理消息积压问题"><a href="#如何处理消息积压问题" class="headerlink" title="如何处理消息积压问题"></a>如何处理消息积压问题</h3><p>1.消息积压是如何产生的<br>网络原因或者消费者能力不足<br>解决：采用工作队列模式，上线更多的消费者，将消息批量取出来放到数据库在做处理</p>
+<h3 id="rabbitmq安装"><a href="#rabbitmq安装" class="headerlink" title="rabbitmq安装"></a>rabbitmq安装</h3><p>环境阿里云centos8，特别注意elang与rabbitmq版本兼容问题</p>
+<ol>
+<li>#安装erlang<br>wget <a target="_blank" rel="noopener" href="https://github.com/rabbitmq/erlang-rpm/releases/download/v22.0.4/erlang-22.0.4-1.el7.x86_64.rpm">https://github.com/rabbitmq/erlang-rpm/releases/download/v22.0.4/erlang-22.0.4-1.el7.x86_64.rpm</a><br>yum -y install erlang-22.0.4-1.el7.x86_64.rpm</li>
+<li>下载rabbitmqwget <a target="_blank" rel="noopener" href="https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.1/rabbitmq-server-3.8.1-1.el8.noarch.rpm">https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.8.1/rabbitmq-server-3.8.1-1.el8.noarch.rpm</a><br>yum -y install rabbitmq-server-3.8.1-1.el8.noarch.rpm</li>
+<li>开启管理界面 rabbitmq-plugins enable rabbitmq_management </li>
+<li>修改配置文件使guest可以远程访问<br>/usr/lib/rabbitmq/lib/rabbitmq_server-3.8.1/ebin/rabbitmq.app<br>将39行的：{loopback_users, [&lt;&lt;”guest”&gt;&gt;]} ，改为：{loopback_users, []}</li>
+<li>/usr/lib/rabbitmq/bin  目录下 ./rabbitmq-server start </li>
+<li>浏览器访问即可 <a target="_blank" rel="noopener" href="http://ip:15672/">http://ip:15672/</a> 账号和密码都是guest<br>确定erlang和rabbitmq 正确安装后无法远程连接web管理界面。<br>1、确定防火墙开放端口<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">开放端口：firewall-cmd --zone&#x3D;public --add-port&#x3D;15672&#x2F;tcp --permanent</span><br><span class="line">查看端口：firewall-cmd --zone&#x3D;public --list-ports</span><br></pre></td></tr></table></figure>
+2、确定开启web管理组件<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">开启组件： rabbitmq-plugins enable rabbitmq_management</span><br><span class="line">查看组件： rabbitmq-plugins list</span><br></pre></td></tr></table></figure>
+3、最重要的一点，登录阿里云检查服务器安全组配置了没</li>
+</ol>
 
     </div>
 
@@ -301,6 +312,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2021/05/31/redis-data-structure/" rel="next" title="redis_data_structure">
+                  redis_data_structure <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
