@@ -23,16 +23,16 @@
     var NexT = window.NexT || {};
     var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
   </script>
-<meta name="description" content="redis单线程or多线程 redis5.0（包括）版本之前都是单线程。  redis单线程：redis的单线程主要是指网络io和健值的读写操作，但是redis的其他功能，像持久化，异步删除，集群数据的同步都是由其他线程完成的。异步删除：redis有很多的数据类型尤其像是list , hash ,set , zset 时间复杂度为O(N)，当删除一个bigkey时需要很长时间，会阻塞redis其他">
+<meta name="description" content="desc:redis数据结构">
 <meta property="og:type" content="article">
 <meta property="og:title" content="redis数据结构">
 <meta property="og:url" content="http://example.com/2021/05/31/redis-data-structure/index.html">
 <meta property="og:site_name" content="lee&#39;s blog">
-<meta property="og:description" content="redis单线程or多线程 redis5.0（包括）版本之前都是单线程。  redis单线程：redis的单线程主要是指网络io和健值的读写操作，但是redis的其他功能，像持久化，异步删除，集群数据的同步都是由其他线程完成的。异步删除：redis有很多的数据类型尤其像是list , hash ,set , zset 时间复杂度为O(N)，当删除一个bigkey时需要很长时间，会阻塞redis其他">
+<meta property="og:description" content="desc:redis数据结构">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://example.com/2021/05/31/redis-data-structure/epoll.png">
 <meta property="article:published_time" content="2021-05-31T11:46:35.000Z">
-<meta property="article:modified_time" content="2021-06-06T09:31:55.003Z">
+<meta property="article:modified_time" content="2021-06-06T09:34:37.744Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/05/31/redis-data-structure/epoll.png">
@@ -165,7 +165,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -240,7 +240,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-06 17:31:55" itemprop="dateModified" datetime="2021-06-06T17:31:55+08:00">2021-06-06</time>
+        <time title="Modified: 2021-06-06 17:34:37" itemprop="dateModified" datetime="2021-06-06T17:34:37+08:00">2021-06-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -255,6 +255,7 @@
   
 </div>
 
+            <div class="post-description">desc:redis数据结构</div>
         </div>
       </header>
 
@@ -305,6 +306,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/2021/06/06/redis-aof/" rel="next" title="redis持久化">
+                  redis持久化 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
