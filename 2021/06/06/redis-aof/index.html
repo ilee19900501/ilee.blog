@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://example.com/2021/06/06/redis-aof/aof-rdb.png">
 <meta property="og:image" content="http://example.com/2021/06/06/redis-aof/redis_master_slave.png">
 <meta property="article:published_time" content="2021-06-06T09:32:52.000Z">
-<meta property="article:modified_time" content="2021-06-07T22:58:12.784Z">
+<meta property="article:modified_time" content="2021-06-07T23:28:11.347Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/06/06/redis-aof/aof-rdb.png">
@@ -151,7 +151,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB%E5%BF%AB%E7%85%A7%EF%BC%88snapshot%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">RDB快照（snapshot）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#aof-append-only-file"><span class="nav-number">2.</span> <span class="nav-text">aof(append-only-file)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rdb-aof%E5%BA%94%E8%AF%A5%E9%80%89%E7%94%A8%E5%93%AA%E4%B8%80%E4%B8%AA"><span class="nav-number">3.</span> <span class="nav-text">rdb,aof应该选用哪一个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-4-0-%E6%B7%B7%E5%90%88%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">Redis 4.0 混合持久化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">5.</span> <span class="nav-text">Redis数据备份策略：##</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84%EF%BC%9A"><span class="nav-number">6.</span> <span class="nav-text">Redis主从架构：##</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#RDB%E5%BF%AB%E7%85%A7%EF%BC%88snapshot%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">RDB快照（snapshot）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#aof-append-only-file"><span class="nav-number">2.</span> <span class="nav-text">aof(append-only-file)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rdb-aof%E5%BA%94%E8%AF%A5%E9%80%89%E7%94%A8%E5%93%AA%E4%B8%80%E4%B8%AA"><span class="nav-number">3.</span> <span class="nav-text">rdb,aof应该选用哪一个</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis-4-0-%E6%B7%B7%E5%90%88%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">Redis 4.0 混合持久化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E7%AD%96%E7%95%A5%EF%BC%9A"><span class="nav-number">5.</span> <span class="nav-text">Redis数据备份策略：##</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Redis%E4%B8%BB%E4%BB%8E%E6%9E%B6%E6%9E%84%EF%BC%9A"><span class="nav-number">6.</span> <span class="nav-text">Redis主从架构：##</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#repl-backlog-size-1mb-%E9%85%8D%E7%BD%AE%E6%9C%80%E8%BF%91%E7%BC%93%E5%AD%98%E5%8C%BA%E5%A4%A7%E5%B0%8F"><span class="nav-number"></span> <span class="nav-text">repl-backlog-size 1mb &#x2F;&#x2F;配置最近缓存区大小</span></a></div>
         </div>
         <!--/noindex-->
 
@@ -241,7 +241,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-08 06:58:12" itemprop="dateModified" datetime="2021-06-08T06:58:12+08:00">2021-06-08</time>
+        <time title="Modified: 2021-06-08 07:28:11" itemprop="dateModified" datetime="2021-06-08T07:28:11+08:00">2021-06-08</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -287,6 +287,8 @@
 <h2 id="Redis主从架构："><a href="#Redis主从架构：" class="headerlink" title="Redis主从架构：##"></a>Redis主从架构：##</h2><p><strong>redis主从架构搭建，配置从节点步骤：</strong></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">1、 复制一份redis.conf文件 </span><br><span class="line">2、将相关配置修改为如下值：port 6380 </span><br><span class="line">pidfile &#x2F;var&#x2F;run&#x2F;redis_6380.pid # 把pid进程号写入pidfile配置的文件 </span><br><span class="line">logfile &quot;6380.log&quot;</span><br><span class="line">dir &#x2F;usr&#x2F;local&#x2F;redis‐5.0.3&#x2F;data&#x2F;6380 # 指定数据存放目录 </span><br><span class="line"># 需要注释掉bind </span><br><span class="line"># bind 127.0.0.1（bind绑定的是自己机器网卡的ip，如果有多块网卡可以配多个ip，代表允许客户端通 过机器的哪些网卡ip去访问，内网一般可以不配置bind，注释掉即可） </span><br><span class="line">3、配置主从复制 replicaof 192.168.0.60(本机也可配置127.0.0.1) 6379 # 从本机6379的redis实例复制数据，Redis 5.0之前使用slaveof </span><br><span class="line">replica‐read‐only yes # 配置从节点只读 </span><br><span class="line">4、启动从节点 redis‐server redis.conf </span><br><span class="line">5、连接从节点 redis‐cli ‐p 6380 </span><br><span class="line">6、测试在6379实例上写数据，6380实例是否能及时同步新修改数据 </span><br></pre></td></tr></table></figure>
 <p><strong>redis主从复制原理：</strong><br><img src="/2021/06/06/redis-aof/redis_master_slave.png"></p>
+<p>rel buffer:master会开辟出一片缓存区，在slave用rdb同步数据的时候如果有新的命令执行。<br><strong>slave在同步数据的时候挂了怎么办？（想接着上次同步的地方接着同步）</strong></p>
+<h1 id="repl-backlog-size-1mb-配置最近缓存区大小"><a href="#repl-backlog-size-1mb-配置最近缓存区大小" class="headerlink" title="repl-backlog-size 1mb //配置最近缓存区大小"></a>repl-backlog-size 1mb //配置最近缓存区大小</h1><p>slave会记录一个offset（上次同步数据的指针），在slave下次重启时，如果offset在rel backlog buffer里面，则根据这个偏移量接着继续同步数据，如果没有则全量同步（执行上面图的操作）</p>
 
     </div>
 
