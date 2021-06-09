@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://example.com/2021/06/06/redis-aof/aof-rdb.png">
 <meta property="og:image" content="http://example.com/2021/06/06/redis-aof/redis_master_slave.png">
 <meta property="article:published_time" content="2021-06-06T09:32:52.000Z">
-<meta property="article:modified_time" content="2021-06-07T23:28:11.347Z">
+<meta property="article:modified_time" content="2021-06-09T00:18:05.134Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/06/06/redis-aof/aof-rdb.png">
@@ -241,7 +241,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-08 07:28:11" itemprop="dateModified" datetime="2021-06-08T07:28:11+08:00">2021-06-08</time>
+        <time title="Modified: 2021-06-09 08:18:05" itemprop="dateModified" datetime="2021-06-09T08:18:05+08:00">2021-06-09</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -289,6 +289,14 @@
 <p><strong>redis主从复制原理：</strong><br><img src="/2021/06/06/redis-aof/redis_master_slave.png"></p>
 <p>rel buffer:master会开辟出一片缓存区，在slave用rdb同步数据的时候如果有新的命令执行。<br><strong>slave在同步数据的时候挂了怎么办？（想接着上次同步的地方接着同步）</strong></p>
 <h1 id="repl-backlog-size-1mb-配置最近缓存区大小"><a href="#repl-backlog-size-1mb-配置最近缓存区大小" class="headerlink" title="repl-backlog-size 1mb //配置最近缓存区大小"></a>repl-backlog-size 1mb //配置最近缓存区大小</h1><p>slave会记录一个offset（上次同步数据的指针），在slave下次重启时，如果offset在rel backlog buffer里面，则根据这个偏移量接着继续同步数据，如果没有则全量同步（执行上面图的操作）</p>
+<p><strong>redis的pipline管道操作</strong><br>redis执行多个命令的时候，每次都要去建立socket连接发送数据，会影响网络传输的性能。<br>可以使用pipline操作，一次性发送多条命令去执行，减少网络传输。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> Pipeline pl &#x3D; jedis.pipelined(); </span><br><span class="line"> for (int i &#x3D; 0; i &lt; 10; i++) &#123; </span><br><span class="line">    pl.incr(&quot;pipelineKey&quot;);</span><br><span class="line">    pl.set(&quot;zhuge&quot; + i, &quot;zhuge&quot;); </span><br><span class="line">    &#x2F;&#x2F;模拟管道报错 </span><br><span class="line">    &#x2F;&#x2F; pl.setbit(&quot;zhuge&quot;, ‐1, true); </span><br><span class="line">&#125; </span><br><span class="line">List&lt;Object&gt; results &#x3D; pl.syncAndReturnAll(); </span><br><span class="line">System.out.println(results);</span><br></pre></td></tr></table></figure>
+<p>缺点：pipline操作不是原子性的，多个命令有错误的不会影响别的命令执行。如果想要异常做处理，就得到results返回结果处理。</p>
+<p><strong>redis的lua脚本</strong><br>1、减少网络开销：本来5次网络请求的操作，可以用一个请求完成，原先5次请求的逻辑放在redis服务器 上完成。使用脚本，减少了网络往返时延。这点跟管道类似。<br>2、原子操作：Redis会将整个脚本作为一个整体执行，中间不会被其他命令插入。管道不是原子的，不过 redis的批量操作命令(类似mset)是原子的。<br>3、替代redis的事务功能：redis自带的事务功能很鸡肋，报错不支持回滚，而redis的lua脚本几乎实现了 常规的事务功能，支持报错回滚操作，官方推荐如果要使用redis的事务功能可以用redis lua替代。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">EVAL script numkeys key [key ...] arg [arg ...]</span><br><span class="line">eval &quot;return &#123;KEYS[1],KEYS[2],ARGV[1],ARGV[2]&#125;&quot; 2 key1 key2 first second</span><br></pre></td></tr></table></figure>
+<p>其中 “return {KEYS[1],KEYS[2],ARGV[1],ARGV[2]}” 是被求值的Lua脚本，数字2指定了键名参数的数 量， key1和key2是键名参数，分别使用 KEYS[1] 和 KEYS[2] 访问，而最后的 first 和 second 则是附加 参数，可以通过 ARGV[1] 和 ARGV[2] 访问它们。<br>在 Lua 脚本中，可以使用redis.call()函数来执行Redis命令 Jedis调用示例详见上面jedis连接示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">jedis.set(&quot;product_stock_10016&quot;, &quot;15&quot;); &#x2F;&#x2F;初始化商品10016的库存 </span><br><span class="line">String script &#x3D; &quot; local count &#x3D; redis.call(&#39;get&#39;, KEYS[1]) &quot; + </span><br><span class="line">&quot; local a &#x3D; tonumber(count) &quot; + </span><br><span class="line">&quot; local b &#x3D; tonumber(ARGV[1]) &quot; +</span><br><span class="line">&quot; if a &gt;&#x3D; b then &quot; + </span><br><span class="line">&quot; redis.call(&#39;set&#39;, KEYS[1], a‐b) &quot; </span><br><span class="line">&#x2F;&#x2F;模拟语法报错回滚操作&quot; bb &#x3D;&#x3D; 0 &quot; + 9 &quot; return 1 &quot; + </span><br><span class="line">&quot; end &quot; + </span><br><span class="line">&quot; return 0 &quot;; </span><br><span class="line">Object obj &#x3D; jedis.eval(script, Arrays.asList(&quot;product_stock_10016&quot;), Arrays.asList(&quot;10&quot;)); </span><br><span class="line">System.out.println(obj)</span><br></pre></td></tr></table></figure>
+<p>上面是一段模拟减库存的事务操作。</p>
 
     </div>
 
