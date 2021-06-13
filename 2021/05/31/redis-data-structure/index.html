@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://example.com/2021/05/31/redis-data-structure/epoll.png">
 <meta property="og:image" content="http://example.com/2021/05/31/redis-data-structure/thread.png">
 <meta property="article:published_time" content="2021-05-31T11:46:35.000Z">
-<meta property="article:modified_time" content="2021-06-08T23:24:46.357Z">
+<meta property="article:modified_time" content="2021-06-13T13:18:24.020Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://example.com/2021/05/31/redis-data-structure/epoll.png">
@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -241,7 +241,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-09 07:24:46" itemprop="dateModified" datetime="2021-06-09T07:24:46+08:00">2021-06-09</time>
+        <time title="Modified: 2021-06-13 21:18:24" itemprop="dateModified" datetime="2021-06-13T21:18:24+08:00">2021-06-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -267,27 +267,43 @@
         <h3 id="redis单线程or多线程"><a href="#redis单线程or多线程" class="headerlink" title="redis单线程or多线程"></a>redis单线程or多线程</h3><hr>
 <p>redis5.0（包括）版本之前都是单线程。</p>
 <ul>
-<li>redis单线程：redis的单线程主要是指网络io和健值的读写操作，但是redis的其他功能，像持久化，异步删除，集群数据的同步都是由其他线程完成的。<br>异步删除：redis有很多的数据类型尤其像是list , hash ,set , zset 时间复杂度为O(N)，当删除一个bigkey时需要很长时间，会阻塞redis其他操作，所以引入了非阻塞删除unlink命令。</li>
-<li>redis单线程为什么这么快？<br>因为redis的数据操作都是在内存中的，单线程减少了多线程之间的切换性能损耗问题。所以在操作redis的时候，尽量减少bigkey的操作，如keys*等。（如果redis做强一致性则会影响到性能，比如写一条命令就像持久化文件里同步一份）</li>
-<li>redis单线程如何处理那么多的客户端并发？<br>src/redis-benchmark get可以压测redis在1s之内能处理多少请求<br>redis采用epoll实现多路复用（NIO）技术，将连接信息和事件放到队列中，依次放到文件事件分派器，事件分派器将事件分发给事件处理器。（在连接和读取数据的等待时间，不会阻塞在那，还可以处理其他请求）<br><img src="/2021/05/31/redis-data-structure/epoll.png"></li>
-<li>redis6.0采用了多线程技术，主要对网络io做了优化<h1 id="io-threads-4-设置多线程"><a href="#io-threads-4-设置多线程" class="headerlink" title="io-threads 4 //设置多线程"></a>io-threads 4 //设置多线程</h1><h1 id="io-threads-do-reads-no-设置io线程可读（没开启的话io线程负责write操作）"><a href="#io-threads-do-reads-no-设置io线程可读（没开启的话io线程负责write操作）" class="headerlink" title="io-threads-do-reads no //设置io线程可读（没开启的话io线程负责write操作）"></a>io-threads-do-reads no //设置io线程可读（没开启的话io线程负责write操作）</h1><img src="/2021/05/31/redis-data-structure/thread.png"><br>所有的命令执行都是由主线程完成。<br>单线程下执行一个命令需要：从socket连接read数据 parse成resp协议的数据 执行命令execute command   通过socket连接写入db write<h3 id="redis常用数据结构"><a href="#redis常用数据结构" class="headerlink" title="redis常用数据结构"></a>redis常用数据结构</h3></li>
-<li>string</li>
-<li>hash<br>hset key field value[field value]<br>使用场景：购物车添加商品时候<br>添加商品hset cart:1001 goodsId:100 1<pre><code>   hset cart:1001 goodsId:101 1
+<li><p>redis单线程：redis的单线程主要是指网络io和健值的读写操作，但是redis的其他功能，像持久化，异步删除，集群数据的同步都是由其他线程完成的。<br>异步删除：redis有很多的数据类型尤其像是list , hash ,set , zset 时间复杂度为O(N)，当删除一个bigkey时需要很长时间，会阻塞redis其他操作，所以引入了非阻塞删除unlink命令。</p>
+</li>
+<li><p>redis单线程为什么这么快？<br>因为redis的数据操作都是在内存中的，单线程减少了多线程之间的切换性能损耗问题。所以在操作redis的时候，尽量减少bigkey的操作，如keys*等。（如果redis做强一致性则会影响到性能，比如写一条命令就像持久化文件里同步一份）</p>
+</li>
+<li><p>redis单线程如何处理那么多的客户端并发？<br>src/redis-benchmark get可以压测redis在1s之内能处理多少请求<br>redis采用epoll实现多路复用（NIO）技术，将连接信息和事件放到队列中，依次放到文件事件分派器，事件分派器将事件分发给事件处理器。（在连接和读取数据的等待时间，不会阻塞在那，还可以处理其他请求）<br><img src="/2021/05/31/redis-data-structure/epoll.png"></p>
+</li>
+<li><p>redis6.0采用了多线程技术，主要对网络io做了优化</p>
+<h1 id="io-threads-4-设置多线程"><a href="#io-threads-4-设置多线程" class="headerlink" title="io-threads 4 //设置多线程"></a>io-threads 4 //设置多线程</h1><h1 id="io-threads-do-reads-no-设置io线程可读（没开启的话io线程负责write操作）"><a href="#io-threads-do-reads-no-设置io线程可读（没开启的话io线程负责write操作）" class="headerlink" title="io-threads-do-reads no //设置io线程可读（没开启的话io线程负责write操作）"></a>io-threads-do-reads no //设置io线程可读（没开启的话io线程负责write操作）</h1><p><img src="/2021/05/31/redis-data-structure/thread.png"><br>所有的命令执行都是由主线程完成。<br>单线程下执行一个命令需要：从socket连接read数据 parse成resp协议的数据 执行命令execute command   通过socket连接写入db write</p>
+<h3 id="redis常用数据结构"><a href="#redis常用数据结构" class="headerlink" title="redis常用数据结构"></a>redis常用数据结构</h3></li>
+<li><p>string</p>
+</li>
+<li><p>hash<br>hset key field value[field value]<br>使用场景：购物车添加商品时候<br>添加商品hset cart:1001 goodsId:100 1</p>
+<pre><code>   hset cart:1001 goodsId:101 1
 </code></pre>
-增加数量：HINCRBY cart:1001 goodsId:100 2<br>获取购物车的所有商品hgetall cart:1001<br>获取某个商品：hget cart:1001 goodsId:100<br>商品总数：HLEN cart:1001<br>删除某个商品：hdel cart:1001 goodsId:100<br>优点：1.相比string占用内存和CPU小 2.相比string方便管理数据，多个数据在同一个key下管理<br>缺点：1.容易产生bigkey 2.过期功能不能用在field上只能用在key上</li>
-<li>list<br>从左边添加元素：lpush color red blue green<br>遍历：LRANGE color 0 10<br>  green  blue  red<br>从左边取一个元素：lpop color<br>实现栈数据结构：（FILO）lpush + lpop<br>从右边添加元素：rpush color yelow<br>从右边取一个元素： rpop color<br>实现队列数据结构（FIFO）：lpush + rpop<br>设置超时时间(如果取不到元素，则等待)；brpop key [] timeout<br>实现阻塞队列：lpush + brpop<br>说明：分布式环境下，要实现阻塞队列和栈数据结构，jdk提供的数据结构就用不了了，可以使用redis的<br><em><strong>使用场景:</strong></em><br> 微博消息和微信公众号发消息(feed流)。<br> lee关注了央视新闻和第一新闻，央视新闻推和第一新闻分别推送了1条消息，id为1008和1009。<ol>
+<p>增加数量：HINCRBY cart:1001 goodsId:100 2<br>获取购物车的所有商品hgetall cart:1001<br>获取某个商品：hget cart:1001 goodsId:100<br>商品总数：HLEN cart:1001<br>删除某个商品：hdel cart:1001 goodsId:100<br>优点：1.相比string占用内存和CPU小 2.相比string方便管理数据，多个数据在同一个key下管理 3.可以减少扩容rehash次数（string类型的比如一个用户多个字段，每个字段都set key-&gt;hash(key)-&gt;arr[]数组放不下时候会扩容进行rehash）<br>缺点：1.容易产生bigkey 2.过期功能不能用在field上只能用在key上</p>
+</li>
+<li><p>list<br>从左边添加元素：lpush color red blue green<br>遍历：LRANGE color 0 10<br>  green  blue  red<br>从左边取一个元素：lpop color<br>实现栈数据结构：（FILO）lpush + lpop<br>从右边添加元素：rpush color yelow<br>从右边取一个元素： rpop color<br>实现队列数据结构（FIFO）：lpush + rpop<br>设置超时时间(如果取不到元素，则等待)；brpop key [] timeout<br>实现阻塞队列：lpush + brpop<br>说明：分布式环境下，要实现阻塞队列和栈数据结构，jdk提供的数据结构就用不了了，可以使用redis的<br><em><strong>使用场景:</strong></em><br> 微博消息和微信公众号发消息(feed流)。<br> lee关注了央视新闻和第一新闻，央视新闻推和第一新闻分别推送了1条消息，id为1008和1009。</p>
+<ol>
 <li>用户量小的时候可以采用push（可以将用户分为活跃用户，非活跃用户）<br>lpush msg:{lee的id} 1008<br>lpush msg:{lee的id} 1009<br>按时间先后顺序展示：lrange msg:{lee的id} 0 1</li>
 <li>用户量大的时候可以采用pull（消息先发到队列里面去，每个用户去队列里面去拉取）        </li>
 </ol>
 </li>
-<li>set<br> sadd key value(不重复的元素)<br> SMEMBERS key(查看所有元素)<br> 使用场景：<ol>
+<li><p>set<br> sadd key value(不重复的元素)<br> SMEMBERS key(查看所有元素)<br> 使用场景：</p>
+<ol>
 <li>用户随机抽奖时<br>sadd prize user01<br>sadd prize user02<br>sadd prize user03<br>SRANDMEMBER prize 1   随机从里面抽取一个（不去除抽过的）<br>spop prize 1  随机从里面抽取一个（去除抽过的）</li>
 <li>朋友圈点赞<br>用户user01，user02，user03都对like:01这条动态点赞<br>sadd like:01 user01<br>sadd like:01 user02<br>sadd like:01 user03<br>查看所有点赞：SMEMBERS like:01<br>取消点赞：srem like:01 user01<br>查看某个用户是否在点赞列表里面：SISMEMBER like:01 user01<br>查看点赞用户数：SCARD like:01</li>
 <li>关注模型（使用集合的交、并、差可实现）<br>我关注的：my:watch-&gt; {user01,user02,user03}<br>张三关注的：zhangsan:watch-&gt; {user07,user02,user09}<br>李四关注的：lisi:watch-&gt; {user03,user04,user09}<br>1&gt; 共同关注的人 ：我关注的好友列表和他的好友列表取交集   sinter my:watch zhangsan:watch<br>2&gt; 我关注的人也关注他：查看我关注的好友是不是存在他的好友列表里面<br>查看我的好友user01是否张三也关注：SISMEMBER zhangsan:watch user01<br>3&gt; 我可能认识的人：思路：用他的好友列表和我的好友列表做查差集<br>进入到李四的微博，我可能认识的人为  sdiff lisi:watch my:watch</li>
 </ol>
-  <em><strong>重点:</strong></em>  关注模型的作用：推荐的人越多，一个人关注的东西越多，则互联网搜取到你的数据越精确，以后给你推荐的数据则更精确</li>
-<li>zset（有序集合）<br>添加一个带分值的元素：zadd key score member[score member]<br>分值从小到大排序：ZRANGE key start stop [WITHSCORES]<br>分值从大到小排序：ZREVRANGE key start stop [WITHSCORES]<br>使用场景：展示微博当前热搜榜前七消息<br>news:01和news:02的消息每点击一次，分值加一<br>ZINCRBY hotnews:20210606 1 news:01<br>ZINCRBY hotnews:20210606 1 news:02<br>展示前七个分值最大的消息：ZREVRANGE hotnews:20210606 0 6 withscores</li>
-<li>其他高级命令<br>scan：渐进式遍历键<br>SCAN cursor [MATCH pattern] [COUNT count]<br>scan 参数提供了三个参数，第一个是 cursor 整数值(hash桶的索引值)，第二个是 key 的正则模式， 第三个是一次遍历的key的数量(参考值，底层遍历的数量不一定)，并不是符合条件的结果数量。第 一次遍历时，cursor 值为 0，然后将返回结果中第一个整数值作为下一次遍历的 cursor。一直遍历 到返回的 cursor 值为 0 时结束。<br>注意：scan并不能保证完整的遍历出来所有的键， 这些是我们在开发时需要考虑的。</li>
+<p>  <em><strong>重点:</strong></em>  关注模型的作用：推荐的人越多，一个人关注的东西越多，则互联网搜取到你的数据越精确，以后给你推荐的数据则更精确</p>
+</li>
+<li><p>zset（有序集合）<br>添加一个带分值的元素：zadd key score member[score member]<br>分值从小到大排序：ZRANGE key start stop [WITHSCORES]<br>分值从大到小排序：ZREVRANGE key start stop [WITHSCORES]<br>使用场景：展示微博当前热搜榜前七消息<br>news:01和news:02的消息每点击一次，分值加一<br>ZINCRBY hotnews:20210606 1 news:01<br>ZINCRBY hotnews:20210606 1 news:02<br>展示前七个分值最大的消息：ZREVRANGE hotnews:20210606 0 6 withscores</p>
+</li>
+<li><p>其他高级命令<br>scan：渐进式遍历键<br>SCAN cursor [MATCH pattern] [COUNT count]<br>scan 参数提供了三个参数，第一个是 cursor 整数值(hash桶的索引值)，第二个是 key 的正则模式， 第三个是一次遍历的key的数量(参考值，底层遍历的数量不一定)，并不是符合条件的结果数量。第 一次遍历时，cursor 值为 0，然后将返回结果中第一个整数值作为下一次遍历的 cursor。一直遍历 到返回的 cursor 值为 0 时结束。<br>注意：scan并不能保证完整的遍历出来所有的键， 这些是我们在开发时需要考虑的。</p>
+</li>
+<li><p>bitmap(位图)<br>通过一个bit位来表示某个元素对应的值或者状态，其中的key就是对应元素本身，value对应0或1，我们知道8个bit可以组成一个Byte，所以bitmap本身会极大的节省储存空间。<br>使用场景：千万级用户登录统计<br>设置offset的位置为1 SETBIT key offset value<br>例子：统计6月12号这天登录用户数量<br>用户id100的用户登录可设置offset100的位置为1：SETBIT login_user_0612 100 1<br>统计1的个数：BITCOUNT login_user_0612<br>例子：统计6月12号和13号连续登录用户数量<br>BITOP and login_user_0612-0613 login_user_0612 lohin_user_0613<br>BITCOUNT login_user_0612-0613</p>
+<p>BITOP AND destkey key [key …] ，对一个或多个 key 求逻辑并，并将结果保存到 destkey 。<br>　BITOP OR destkey key [key …] ，对一个或多个 key 求逻辑或，并将结果保存到 destkey 。<br>　BITOP XOR destkey key [key …] ，对一个或多个 key 求逻辑异或，并将结果保存到 destkey 。<br>　BITOP NOT destkey key ，对给定 key 求逻辑非，并将结果保存到 destkey 。</p>
+</li>
 </ul>
 
     </div>
@@ -302,8 +318,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2021/05/11/rabbitmq/" rel="prev" title="rabbitmq">
-                  <i class="fa fa-chevron-left"></i> rabbitmq
+                <a href="/2021/05/31/redis-cluster/" rel="prev" title="redis集群">
+                  <i class="fa fa-chevron-left"></i> redis集群
                 </a>
             </div>
             <div class="post-nav-item">
