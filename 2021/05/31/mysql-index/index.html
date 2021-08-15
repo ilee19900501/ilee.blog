@@ -30,10 +30,17 @@
 <meta property="og:site_name" content="lee&#39;s blog">
 <meta property="og:description" content="desc:mysql index">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2021/05/31/mysql-index/btree.png">
+<meta property="og:image" content="http://example.com/2021/05/31/mysql-index/b+tree.png">
+<meta property="og:image" content="http://example.com/2021/05/31/mysql-index/index.png">
+<meta property="og:image" content="http://example.com/2021/05/31/mysql-index/primary_index.png">
+<meta property="og:image" content="http://example.com/2021/05/31/mysql-index/secondary.png">
+<meta property="og:image" content="http://example.com/2021/05/31/mysql-index/myisam.png">
 <meta property="article:published_time" content="2021-05-31T11:46:35.000Z">
-<meta property="article:modified_time" content="2021-06-19T02:18:44.908Z">
+<meta property="article:modified_time" content="2021-06-28T03:31:14.372Z">
 <meta property="article:author" content="lee">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/05/31/mysql-index/btree.png">
 
 
 <link rel="canonical" href="http://example.com/2021/05/31/mysql-index/">
@@ -135,7 +142,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           Table of Contents
@@ -148,6 +155,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#mysql%E7%B4%A2%E5%BC%95%E5%BA%95%E5%B1%82%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">mysql索引底层与数据算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#b-tree"><span class="nav-number">1.1.</span> <span class="nav-text">b-tree:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-tree-1"><span class="nav-number">1.2.</span> <span class="nav-text">b+tree:</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -162,12 +170,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">categories</span>
       </div>
   </nav>
@@ -237,7 +245,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-06-19 10:18:44" itemprop="dateModified" datetime="2021-06-19T10:18:44+08:00">2021-06-19</time>
+        <time title="Modified: 2021-06-28 11:31:14" itemprop="dateModified" datetime="2021-06-28T11:31:14+08:00">2021-06-28</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -260,7 +268,38 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        
+        <h3 id="mysql索引底层与数据算法"><a href="#mysql索引底层与数据算法" class="headerlink" title="mysql索引底层与数据算法"></a>mysql索引底层与数据算法</h3><p>索引：mysql高效获取数据的<strong>排好序</strong>的数据结构<br>数据结构动态演示图：<a target="_blank" rel="noopener" href="https://www.cs.usfca.edu/~galles/visualization/Algorithms.html">https://www.cs.usfca.edu/~galles/visualization/Algorithms.html</a></p>
+<h4 id="b-tree"><a href="#b-tree" class="headerlink" title="b-tree:"></a>b-tree:</h4><p>系统从磁盘读取数据到内存时是以磁盘块（block）为基本单位的，位于同一个磁盘块中的数据会被一次性读取出来，而不是需要什么取什么。</p>
+<p>InnoDB存储引擎中有页（Page）的概念，页是其磁盘管理的最小单位。InnoDB存储引擎中默认每个页的大小为16KB，可通过参数<br>innodb_page_size将页的大小设置为4K、8K、16K，在MySQL中可通过如下命令查看页的大小：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show variables like &#39;innodb_page_size&#39;;</span><br></pre></td></tr></table></figure>
+<p>下图是一个3阶的b-tree<br><img src="/2021/05/31/mysql-index/btree.png"><br>模拟查找关键字29的过程：</p>
+<p>根据根节点找到磁盘块1，读入内存。【磁盘I/O操作第1次】<br>比较关键字29在区间（17,35），找到磁盘块1的指针P2。<br>根据P2指针找到磁盘块3，读入内存。【磁盘I/O操作第2次】<br>比较关键字29在区间（26,30），找到磁盘块3的指针P2。<br>根据P2指针找到磁盘块8，读入内存。【磁盘I/O操作第3次】<br>在磁盘块8中的关键字列表中找到关键字29。<br>分析上面过程，发现需要3次磁盘I/O操作，和3次内存查找操作。由于内存中的关键字是一个有序表结构，可以利用二分法查找提高效率。而3次磁盘I/O操作是影响整个B-Tree查找效率的决定因素。<br>b-tree存储索引特点：</p>
+<ol>
+<li>索引大小从左到右依次递增</li>
+<li>所有索引元素不重复</li>
+<li>叶节点存储索引和数据</li>
+</ol>
+<h4 id="b-tree-1"><a href="#b-tree-1" class="headerlink" title="b+tree:"></a>b+tree:</h4><p><img src="/2021/05/31/mysql-index/b+tree.png"> </p>
+<ul>
+<li>所有的叶子结点中包含了全部关键字的信息，非叶子节点（冗余索引）只存储键值信息，及指向含有这些关键字记录的指针，且叶子结点本身依关键字的大小自小而大的顺序链接。</li>
+<li>所有叶子节点之间都有一个链指针。</li>
+<li>数据记录都存放在叶子节点中。</li>
+</ul>
+<p>b-tree和b+tree分析：</p>
+<ul>
+<li>查找索引数据的过程是一样的</li>
+<li>b-tree每个索引存放数据，假设每个索引对应的数据有1kb,每一层最多只能存放16个索引，如果数据达到千万级需要16的n次方，树的深度很深</li>
+<li>b+tree非叶子节点只存放索引，假设索引是bigInt（8个字节）+指针（6个字节），没一层可存储 16<em>1024/8</em>6=1170,三层树可存储1170<em>1170</em>16的索引</li>
+</ul>
+<p>mysql的索引存放在data目录下：<br>查看data路径：show variables like ‘%datadir%’;<br><img src="/2021/05/31/mysql-index/index.png"><br>innodb存储引擎下：</p>
+<ul>
+<li>.frm表的数据结构信息。</li>
+<li>.ibd文件表的索引与数据信息<br>说明：索引和数据是在一个文件里面<br>索引存储：<br><img src="/2021/05/31/mysql-index/primary_index.png" alt="聚簇索引"><br>普通索引和myisam一样，只不过索引下面存的是对应的主键，而非磁盘地址.<br><img src="/2021/05/31/mysql-index/secondary.png"><br>myisam存储引擎下：</li>
+<li>.frm表的数据结构信息。</li>
+<li>.MYD文件表的数据信息  </li>
+<li>.MYI文件表的索引信息<br>说明：索引和数据是在二个文件里面<br>myisam查找数据：<br><img src="/2021/05/31/mysql-index/myisam.png" alt="myisam"></li>
+</ul>
+
     </div>
 
     
