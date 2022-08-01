@@ -158,7 +158,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -201,6 +201,73 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/01/arrayAndLinkList/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/mountain.jpg">
+      <meta itemprop="name" content="lee">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lee's blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/08/01/arrayAndLinkList/" class="post-title-link" itemprop="url">arrayAndLinkList</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-08-01 21:48:00 / Modified: 23:07:22" itemprop="dateCreated datePublished" datetime="2022-08-01T21:48:00+08:00">2022-08-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p><img src="/2022/08/01/arrayAndLinkList/array.png"><br>int[]arr=new int[5];<br>1.长度是固定的不可变，如果长度超过则会报下标越界。<br>2.连续的内存空间，每个元素的类型都是一样的，每个元素占用的内存长度是一样的（引用类型存放的是内存地址，数组只需存放第一个元素的内存地址就可以了）。则可以通过下标访问任何一个元素：查询元素的内存地址=起始元素的内存地址 + i*每个元素占用的内存长度<br>3.查询元素，例如arr[2]，只需一次就可以定位到下标为2的内存地址，时间复杂度是O(1)<br>4.插入或者删除元素，数组是不支持插入元素的（容量满了后会下标越界）。可变数组的话可以在插入元素，元素的位置都得跟着移动。</p>
+<h3 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h3><p><img src="/2022/08/01/arrayAndLinkList/linkedList.png"><br>1.通过元素的指针联系起来的，不是连续的内存空间，无法通过第一个下标位置去计算另一个下标的内存位置，只能一次一次遍历去找（链表中存储的是第一个元素的内存地址：只能通过指针往后面查找），所以查找的时间复杂度是O（n）<br>2.jdk中提供的链表，会存储head和last的内存地址，查找进行了优化，查找复杂度是O（n/2）<br>3.插入或者删除元素，只需通过下标找到对应的内存地址，修改前后元素的指针就可以</p>
+<p>get(object):数组和链表效果差不多O(n)，如果是有序数组的话可以通过二分查找法优化,链表也可以通过添加head，last去优化<br>存储空间：链表占用内存稍微大点，不仅存储元素还需存储指针。链表可以利用零碎的内存空间</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2022/07/31/task-arrangement/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -226,7 +293,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2022-07-31 11:10:16 / Modified: 11:24:56" itemprop="dateCreated datePublished" datetime="2022-07-31T11:10:16+08:00">2022-07-31</time>
+      <time title="Created: 2022-07-31 11:10:16 / Modified: 11:38:49" itemprop="dateCreated datePublished" datetime="2022-07-31T11:10:16+08:00">2022-07-31</time>
     </span>
 
   
@@ -939,93 +1006,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2021/04/27/mybatis/">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/26/spring-mybatis/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/mountain.jpg">
-      <meta itemprop="name" content="lee">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lee's blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2021/04/26/spring-mybatis/" class="post-title-link" itemprop="url">spring集成mybatis</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-04-26 21:50:40" itemprop="dateCreated datePublished" datetime="2021-04-26T21:50:40+08:00">2021-04-26</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">Edited on</span>
-        <time title="Modified: 2021-05-16 18:28:51" itemprop="dateModified" datetime="2021-05-16T18:28:51+08:00">2021-05-16</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/spring5%E6%BA%90%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">spring5源码</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>desc:spring_mybatis</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/26/spring-mybatis/">
                 Read more &raquo;
               </a>
             </div>
