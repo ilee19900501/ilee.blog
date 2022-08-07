@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","version":"8.2.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}};
+  </script>
+<meta name="description" content="desc:数据结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="blockingQueue">
+<meta property="og:url" content="http://example.com/2022/08/02/blockingQueue/index.html">
+<meta property="og:site_name" content="lee&#39;s blog">
+<meta property="og:description" content="desc:数据结构">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/2022/08/02/blockingQueue/arrayBlockingQueue.png">
+<meta property="og:image" content="http://example.com/2022/08/02/blockingQueue/LinkedBlockingQueue.png">
+<meta property="article:published_time" content="2022-08-02T14:10:38.000Z">
+<meta property="article:modified_time" content="2022-08-06T15:19:13.896Z">
+<meta property="article:author" content="lee">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2022/08/02/blockingQueue/arrayBlockingQueue.png">
+
+
+<link rel="canonical" href="http://example.com/2022/08/02/blockingQueue/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+<title>blockingQueue | lee's blog</title>
+  
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">lee's blog</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">躬自厚而薄责于人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayBlockingQueue"><span class="nav-number">1.</span> <span class="nav-text">ArrayBlockingQueue</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedBlockingQueue"><span class="nav-number">2.</span> <span class="nav-text">LinkedBlockingQueue</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lee"
+      src="/images/mountain.jpg">
+  <p class="site-author-name" itemprop="name">lee</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">categories</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/08/02/blockingQueue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/mountain.jpg">
+      <meta itemprop="name" content="lee">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lee's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          blockingQueue
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-08-02 22:10:38" itemprop="dateCreated datePublished" datetime="2022-08-02T22:10:38+08:00">2022-08-02</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">Edited on</span>
+        <time title="Modified: 2022-08-06 23:19:13" itemprop="dateModified" datetime="2022-08-06T23:19:13+08:00">2022-08-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">desc:数据结构</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="ArrayBlockingQueue"><a href="#ArrayBlockingQueue" class="headerlink" title="ArrayBlockingQueue"></a>ArrayBlockingQueue</h3><p>1.数据结构：静态数组  容量固定必须指定长度，没有扩容机制，没有元素的下标位置null占位<br>2.锁：ReentrantLock存取的是同一把锁，操作的是同一个数组对象<br>3.阻塞： notEmpty –出队：队列count为0，无元素可取时，阻塞在该对象上（Condotion对象）<br>        notFull –入队：队列count为数组的length，放不进元素的时候，阻塞在该对象上（Condotion对象）<br>4.入队： 从队首开始添加元素，记录putIndex(到队尾时候记为0：下次在队首添加元素)  唤醒notEmpty<br>5.出队： 从队首开始取元素，记录takeIndex (到队尾时候记为0：下次从队首取)  唤醒notFull<br>6:先进先出，读写互相排斥<br>说明：Condotion notEmpty = lock.newCondition() ，Condotion notFull为lock.newCondition() ，<br>Condition配合lock使用<br>唤醒当前线程：notEmpty.signal()； 阻塞当前线程 notEmpty.await()<br>notFull.await()；notFull.signal()—底层使用的是LockSupport.park(this);LockSupport.unPark(this);</p>
+<p><img src="/2022/08/02/blockingQueue/arrayBlockingQueue.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 入队</span><br><span class="line">public void put(E e) throws InterruptedException &#123;</span><br><span class="line">        checkNotNull(e);</span><br><span class="line">        final ReentrantLock lock &#x3D; this.lock;</span><br><span class="line">        lock.lockInterruptibly();</span><br><span class="line">        try &#123;</span><br><span class="line">            while (count &#x3D;&#x3D; items.length)</span><br><span class="line">                notFull.await(); &#x2F;&#x2F; 阻塞,不能再放元素了</span><br><span class="line">            enqueue(e);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> private void enqueue(E x) &#123;</span><br><span class="line">        &#x2F;&#x2F; assert lock.getHoldCount() &#x3D;&#x3D; 1;</span><br><span class="line">        &#x2F;&#x2F; assert items[putIndex] &#x3D;&#x3D; null;</span><br><span class="line">        final Object[] items &#x3D; this.items;</span><br><span class="line">        items[putIndex] &#x3D; x;</span><br><span class="line">        if (++putIndex &#x3D;&#x3D; items.length)</span><br><span class="line">            putIndex &#x3D; 0;</span><br><span class="line">        count++;</span><br><span class="line">        notEmpty.signal();&#x2F;&#x2F; 唤醒 notEmpty，可以取元素了</span><br><span class="line">    &#125;   </span><br><span class="line"> &#x2F;&#x2F; 出队   </span><br><span class="line">public E take() throws InterruptedException &#123;</span><br><span class="line">    final ReentrantLock lock &#x3D; this.lock;</span><br><span class="line">    lock.lockInterruptibly();</span><br><span class="line">    try &#123;</span><br><span class="line">        while (count &#x3D;&#x3D; 0)</span><br><span class="line">            notEmpty.await();&#x2F;&#x2F; 阻塞，没有元素可以拿了</span><br><span class="line">        return dequeue();</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        lock.unlock();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;   </span><br><span class="line">private E dequeue() &#123;</span><br><span class="line">        &#x2F;&#x2F; assert lock.getHoldCount() &#x3D;&#x3D; 1;</span><br><span class="line">        &#x2F;&#x2F; assert items[takeIndex] !&#x3D; null;</span><br><span class="line">        final Object[] items &#x3D; this.items;</span><br><span class="line">        @SuppressWarnings(&quot;unchecked&quot;)</span><br><span class="line">        E x &#x3D; (E) items[takeIndex];</span><br><span class="line">        items[takeIndex] &#x3D; null;</span><br><span class="line">        if (++takeIndex &#x3D;&#x3D; items.length)</span><br><span class="line">            takeIndex &#x3D; 0;</span><br><span class="line">        count--;</span><br><span class="line">        if (itrs !&#x3D; null)</span><br><span class="line">            itrs.elementDequeued();</span><br><span class="line">        notFull.signal();&#x2F;&#x2F; 唤醒notFull，可以往里面再放元素了</span><br><span class="line">        return x;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="LinkedBlockingQueue"><a href="#LinkedBlockingQueue" class="headerlink" title="LinkedBlockingQueue"></a>LinkedBlockingQueue</h3><p>1.数据结构：链表Node 可以指定容量，默认为Integer.Max,内部类Node存储元素，初始化head,last为null的node<br>2.锁分离：存取分离，操作的是不同的Node对象<br>         putLock:存Node后保证前驱节点后继不会乱<br>         takeLock:取Node后保证前驱节点后继不会乱<br>3.阻塞：同ArrayBlockingQueue<br>4.入队：队尾入队  记录last节点<br>5.出队：队首出队  记录head节点<br>6：先进先出，读写分离（提高并发性能,所以线程池使用的是LinkedBlockingQueue）<br>7.删除元素时俩个锁一起加</p>
+<p><img src="/2022/08/02/blockingQueue/LinkedBlockingQueue.png"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">入队</span><br><span class="line">public void put(E e) throws InterruptedException &#123;</span><br><span class="line">        if (e &#x3D;&#x3D; null) throw new NullPointerException();</span><br><span class="line">        &#x2F;&#x2F; Note: convention in all put&#x2F;take&#x2F;etc is to preset local var</span><br><span class="line">        &#x2F;&#x2F; holding count negative to indicate failure unless set.</span><br><span class="line">        int c &#x3D; -1;</span><br><span class="line">        Node&lt;E&gt; node &#x3D; new Node&lt;E&gt;(e);</span><br><span class="line">        final ReentrantLock putLock &#x3D; this.putLock;</span><br><span class="line">        final AtomicInteger count &#x3D; this.count;</span><br><span class="line">        putLock.lockInterruptibly();</span><br><span class="line">        try &#123;</span><br><span class="line">           &#x2F;&#x2F; 当前存放元素已满则阻塞notFull，不能再放元素了</span><br><span class="line">            while (count.get() &#x3D;&#x3D; capacity) &#123;</span><br><span class="line">                notFull.await();</span><br><span class="line">            &#125;</span><br><span class="line">            &#x2F;&#x2F; 入队，链到尾部并记录last节点</span><br><span class="line">            enqueue(node);</span><br><span class="line">            c &#x3D; count.getAndIncrement();</span><br><span class="line">            if (c + 1 &lt; capacity)</span><br><span class="line">                notFull.signal();&#x2F;&#x2F; 唤醒notFull</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            putLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">        if (c &#x3D;&#x3D; 0)</span><br><span class="line">            signalNotEmpty();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"> 出队：</span><br><span class="line"> public E take() throws InterruptedException &#123;</span><br><span class="line">        E x;</span><br><span class="line">        int c &#x3D; -1;</span><br><span class="line">        final AtomicInteger count &#x3D; this.count;</span><br><span class="line">        final ReentrantLock takeLock &#x3D; this.takeLock;</span><br><span class="line">        takeLock.lockInterruptibly();</span><br><span class="line">        try &#123;</span><br><span class="line">            while (count.get() &#x3D;&#x3D; 0) &#123;</span><br><span class="line">                notEmpty.await();</span><br><span class="line">            &#125;</span><br><span class="line">            x &#x3D; dequeue();</span><br><span class="line">            c &#x3D; count.getAndDecrement();</span><br><span class="line">            if (c &gt; 1)</span><br><span class="line">                notEmpty.signal();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            takeLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">        if (c &#x3D;&#x3D; capacity)</span><br><span class="line">            signalNotFull();</span><br><span class="line">        return x;</span><br><span class="line">    &#125;   </span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/08/01/arrayAndLinkList/" rel="prev" title="数组和链表">
+                  <i class="fa fa-chevron-left"></i> 数组和链表
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lee</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
